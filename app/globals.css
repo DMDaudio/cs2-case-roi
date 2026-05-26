@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body {
+    @apply bg-bg-base text-ink antialiased;
+    font-feature-settings: "cv11", "ss01", "ss03";
+  }
+
+  body {
+    background-image:
+      radial-gradient(
+        1200px 600px at 80% -10%,
+        rgba(222, 155, 53, 0.06),
+        transparent 60%
+      ),
+      radial-gradient(
+        800px 500px at -10% 30%,
+        rgba(94, 152, 217, 0.05),
+        transparent 60%
+      );
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background: rgba(222, 155, 53, 0.35);
+    color: #fff;
+  }
+}
+
+@layer components {
+  .num {
+    @apply font-mono tabular-nums;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-md border border-bg-border bg-bg-raised px-2 py-0.5 text-xs text-ink-dim;
+  }
+
+  .panel {
+    @apply rounded-xl border border-bg-border bg-bg-raised/70 backdrop-blur-sm;
+  }
+
+  .panel-elevated {
+    @apply rounded-xl border border-bg-border bg-bg-elevated;
+  }
+
+  .divider {
+    @apply h-px w-full bg-bg-border;
+  }
+
+  /* tactical scan-line accent used on hero panels */
+  .scanlines {
+    background-image: repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.015) 0,
+      rgba(255, 255, 255, 0.015) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "generatedAt": "2026-05-25T00:00:00.000Z",
+  "source": "seed (run `npm run fetch-metadata` to replace with full ByMykel data)",
+  "cases": [
+    {
+      "id": "crate_3175",
+      "name": "Kilowatt Case",
+      "imageUrl": null,
+      "releaseDate": "2024-02-07",
+      "requiresKey": true,
+      "keyMarketHashName": "Kilowatt Case Key",
+      "caseMarketHashName": "Kilowatt Case",
+      "contents": [
+        { "baseName": "MP7 | Just Smile", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "Glock-18 | Block-18", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "Nova | Dark Sigil", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "SCAR-20 | Fragments", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "MAC-10 | Light Box", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "XM1014 | Irezumi", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "Sawed-Off | Analog Input", "rarity": "restricted", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "USP-S | Jawbreaker", "rarity": "restricted", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "M4A1-S | Black Lotus", "rarity": "restricted", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "UMP-45 | Motorized", "rarity": "classified", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "Five-SeveN | Hybrid", "rarity": "classified", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "Zeus x27 | Olympus", "rarity": "covert", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "AWP | Chrome Cannon", "rarity": "covert", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null }
+      ],
+      "rareSpecial": [
+        { "baseName": "★ Kukri Knife", "rarity": "rare_special", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null }
+      ]
+    },
+    {
+      "id": "crate_4001",
+      "name": "Revolution Case",
+      "imageUrl": null,
+      "releaseDate": "2023-02-09",
+      "requiresKey": true,
+      "keyMarketHashName": "Revolution Case Key",
+      "caseMarketHashName": "Revolution Case",
+      "contents": [
+        { "baseName": "MP9 | Featherweight", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "Tec-9 | Rebel", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "P250 | Re.built", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "SG 553 | Cyberforce", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "SCAR-20 | Fragments", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "R8 Revolver | Banana Cannon", "rarity": "restricted", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "MAC-10 | Sakkaku", "rarity": "restricted", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "P90 | Cocoa Rampage", "rarity": "restricted", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "AUG | Plague", "rarity": "classified", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "Glock-18 | Umbral Rabbit", "rarity": "classified", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "AK-47 | Head Shot", "rarity": "covert", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "M4A4 | Temukau", "rarity": "covert", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null }
+      ],
+      "rareSpecial": []
+    },
+    {
+      "id": "crate_4002",
+      "name": "Recoil Case",
+      "imageUrl": null,
+      "releaseDate": "2022-07-01",
+      "requiresKey": true,
+      "keyMarketHashName": "Recoil Case Key",
+      "caseMarketHashName": "Recoil Case",
+      "contents": [
+        { "baseName": "MAG-7 | Bulldozer", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "Negev | Ultralight", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "P250 | Visions", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "USP-S | Printstream", "rarity": "covert", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "AK-47 | Ice Coaled", "rarity": "covert", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "AWP | Chromatic Aberration", "rarity": "classified", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "FAMAS | Meltdown", "rarity": "classified", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "Dual Berettas | Hideout", "rarity": "restricted", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "R8 Revolver | Crazy 8", "rarity": "restricted", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "SSG 08 | Rapid Transit", "rarity": "restricted", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null }
+      ],
+      "rareSpecial": []
+    },
+    {
+      "id": "crate_4003",
+      "name": "Dreams & Nightmares Case",
+      "imageUrl": null,
+      "releaseDate": "2022-01-20",
+      "requiresKey": true,
+      "keyMarketHashName": "Dreams & Nightmares Case Key",
+      "caseMarketHashName": "Dreams & Nightmares Case",
+      "contents": [
+        { "baseName": "MP9 | Starlight Protector", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "P2000 | Lifted Spirits", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "MAG-7 | Foresight", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "USP-S | Ticket to Hell", "rarity": "restricted", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "FAMAS | Rapid Eye Movement", "rarity": "restricted", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "G3SG1 | Dream Glade", "rarity": "restricted", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "MP7 | Abyssal Apparition", "rarity": "classified", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "PP-Bizon | Space Cat", "rarity": "classified", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "AK-47 | Nightwish", "rarity": "covert", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "M4A1-S | Night Terror", "rarity": "covert", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null }
+      ],
+      "rareSpecial": []
+    },
+    {
+      "id": "crate_4004",
+      "name": "Snakebite Case",
+      "imageUrl": null,
+      "releaseDate": "2021-05-03",
+      "requiresKey": true,
+      "keyMarketHashName": "Snakebite Case Key",
+      "caseMarketHashName": "Snakebite Case",
+      "contents": [
+        { "baseName": "Glock-18 | Clear Polymer", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "P250 | Cyber Shell", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "MAC-10 | Button Masher", "rarity": "mil_spec", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "MP9 | Food Chain", "rarity": "restricted", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "XM1014 | XOXO", "rarity": "restricted", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "USP-S | Black Lotus", "rarity": "restricted", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "Nova | Windblown", "rarity": "classified", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "M4A4 | In Living Color", "rarity": "classified", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "CZ75-Auto | Circaetus", "rarity": "covert", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null },
+        { "baseName": "AWP | Containment Breach", "rarity": "covert", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": true, "imageUrl": null }
+      ],
+      "rareSpecial": [
+        { "baseName": "★ Bloodhound Gloves", "rarity": "rare_special", "availableWears": ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"], "statTrakAvailable": false, "imageUrl": null }
+      ]
+    }
+  ]
+}
