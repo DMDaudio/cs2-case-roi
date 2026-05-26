@@ -34,8 +34,15 @@ let flushTimer: NodeJS.Timeout | null = null;
 
 function ensureLoaded(): Store {
   if (store) return store;
-  const dir = path.resolve(process.cwd(), "data");
-  fs.mkdirSync(dir, { recursive: true });
+  // On Vercel (and other serverless platforms) only /tmp is writable.
+  // Locally, keep the cache alongside the static data so devs can clear it easily.
+  const isServerless = !!process.env.VERCEL || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
+  const dir = isServerless ? "/tmp" : path.resolve(process.cwd(), "data");
+  try {
+    fs.mkdirSync(dir, { recursive: true });
+  } catch {
+    /* read-only fs — that's fine, we'll run cache-in-memory */
+  }
   storePath = path.join(dir, "cache.json");
   if (fs.existsSync(storePath)) {
     try {
@@ -64,7 +71,13 @@ function scheduleFlush() {
 
 export function flush() {
   if (!store || !storePath || !dirty) return;
-  fs.writeFileSync(storePath, JSON.stringify(store));
+  try {
+    fs.writeFileSync(storePath, JSON.stringify(store));
+  } catch {
+    // Read-only filesystem — in-memory cache still works for the
+    // lifetime of this function instance, which is what matters on
+    // serverless cold-starts.
+  }
   dirty = false;
 }
 
