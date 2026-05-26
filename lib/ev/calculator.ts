@@ -11,6 +11,7 @@ import {
 export type SkinPricing = {
   baseName: string;
   rarity: Rarity;
+  imageUrl: string | null;
   /** Mean of available-wear prices. null = no source priced any wear. */
   normalPrice: number | null;
   /** Same logic for StatTrak™ variants. */
@@ -126,6 +127,7 @@ function priceForItem(
   return {
     baseName: item.baseName,
     rarity: item.rarity,
+    imageUrl: item.imageUrl,
     normalPrice,
     statTrakPrice,
     expectedPrice,

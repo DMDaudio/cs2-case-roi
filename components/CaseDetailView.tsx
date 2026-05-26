@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { CaseEV } from "@/lib/ev/calculator";
 import type { SourceName } from "@/lib/prices/types";
 import { EVBadge } from "./EVBadge";
@@ -20,7 +21,19 @@ export function CaseDetailView({
       <div className="panel-elevated relative overflow-hidden p-6">
         <div className="scanlines pointer-events-none absolute inset-0 opacity-40" />
         <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div>
+          <div className="flex items-center gap-5">
+            {ev.caseImageUrl && (
+              <div className="relative h-28 w-28 shrink-0 rounded-lg bg-bg-elevated p-2 ring-1 ring-bg-border">
+                <Image
+                  src={ev.caseImageUrl}
+                  alt={ev.caseName}
+                  fill
+                  sizes="112px"
+                  className="object-contain p-1"
+                />
+              </div>
+            )}
+            <div>
             <div className="text-xs uppercase tracking-[0.25em] text-ink-faint">Case</div>
             <h1 className="mt-1 text-3xl font-bold text-ink">{ev.caseName}</h1>
             <div className="mt-3 flex flex-wrap gap-2 text-xs">
@@ -36,6 +49,7 @@ export function CaseDetailView({
               {ev.lotteryScore != null && (
                 <span className="chip">σ/μ <span className="ml-1 num text-ink">{ev.lotteryScore.toFixed(2)}</span></span>
               )}
+            </div>
             </div>
           </div>
 
@@ -110,13 +124,30 @@ export function CaseDetailView({
                       ? tier.perItemProbability * item.expectedPrice
                       : null;
                   return (
-                    <tr key={item.baseName} className="border-t border-bg-border/60">
+                    <tr key={item.baseName} className="border-t border-bg-border/60 hover:bg-bg-elevated/30">
                       <td className="px-4 py-2">
-                        <div className="flex items-center gap-2">
-                          <RarityBar rarity={item.rarity} />
-                          <span className={item.unpriced ? "text-ink-faint" : "text-ink"}>
-                            {item.baseName}
-                          </span>
+                        <div className="flex items-center gap-3">
+                          {item.imageUrl ? (
+                            <div className="relative h-10 w-16 shrink-0 rounded bg-bg-elevated/60 ring-1 ring-bg-border">
+                              <Image
+                                src={item.imageUrl}
+                                alt={item.baseName}
+                                fill
+                                sizes="64px"
+                                className="object-contain p-1"
+                              />
+                            </div>
+                          ) : (
+                            <div className="h-10 w-16 shrink-0 rounded bg-bg-elevated/40" />
+                          )}
+                          <div className="flex flex-col">
+                            <div className="flex items-center gap-1.5">
+                              <RarityBar rarity={item.rarity} />
+                              <span className={item.unpriced ? "text-ink-faint" : "text-ink"}>
+                                {item.baseName}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </td>
                       <td className="px-4 py-2 text-xs text-ink-dim">
