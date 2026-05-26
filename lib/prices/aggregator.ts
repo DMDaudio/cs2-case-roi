@@ -86,19 +86,23 @@ export async function aggregate(
   for (const name of marketHashNames) {
     const sources: AggregatedPrice["sources"] = [];
     const prices: number[] = [];
+    const quantities: number[] = [];
     let maxFetchedAt = 0;
     for (const src of ALL_SOURCES) {
       if (!requested.has(src.name)) continue;
       const q = perSourceQuotes.get(src.name)?.get(name);
       const p = q?.lowestPrice ?? null;
-      sources.push({ name: src.name, price: p });
+      const qty = q?.quantity ?? null;
+      sources.push({ name: src.name, price: p, quantity: qty });
       if (q && q.fetchedAt > maxFetchedAt) maxFetchedAt = q.fetchedAt;
       if (p != null && p > 0) prices.push(p);
+      if (qty != null) quantities.push(qty);
     }
     out.set(name, {
       marketHashName: name,
       bestPrice: prices.length > 0 ? Math.min(...prices) : null,
       meanAcrossSources: prices.length > 0 ? prices.reduce((a, b) => a + b, 0) / prices.length : null,
+      quantity: quantities.length > 0 ? Math.max(...quantities) : null,
       sources,
       fetchedAt: maxFetchedAt || Date.now(),
     });

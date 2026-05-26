@@ -57,6 +57,7 @@ export const skinportSource: PriceSource = {
         source: "skinport",
         lowestPrice: item?.min_price ?? null,
         medianPrice: item?.median_price ?? null,
+        quantity: item?.quantity ?? null,
         fetchedAt,
       };
     });

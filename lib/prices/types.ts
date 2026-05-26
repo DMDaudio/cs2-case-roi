@@ -7,6 +7,12 @@ export type PriceQuote = {
   lowestPrice: number | null;
   /** Median / "median_price" if the source exposes one, else null. */
   medianPrice: number | null;
+  /**
+   * Number of live listings the source sees for this item. Skinport
+   * exposes this directly; Steam/CSFloat don't, so we record null and
+   * treat it as "unknown depth" downstream.
+   */
+  quantity: number | null;
   /** unix ms */
   fetchedAt: number;
 };
@@ -27,6 +33,8 @@ export type AggregatedPrice = {
   bestPrice: number | null;
   /** Simple mean of lowestPrice across sources that returned a value. */
   meanAcrossSources: number | null;
-  sources: { name: SourceName; price: number | null }[];
+  /** Max quantity seen across sources (null if no source exposed depth). */
+  quantity: number | null;
+  sources: { name: SourceName; price: number | null; quantity: number | null }[];
   fetchedAt: number;
 };

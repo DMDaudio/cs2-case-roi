@@ -109,10 +109,14 @@ export function CaseDetailView({
             <table className="w-full text-sm">
               <thead className="text-left text-xs uppercase tracking-wider text-ink-faint">
                 <tr>
-                  <th className="px-4 py-2 font-normal">Skin</th>
+                  <th className="px-4 py-2 font-normal">Item</th>
                   <th className="px-4 py-2 font-normal">Wears priced</th>
-                  <th className="px-4 py-2 text-right font-normal">Normal avg</th>
-                  <th className="px-4 py-2 text-right font-normal">StatTrak avg</th>
+                  <th className="px-4 py-2 text-right font-normal">
+                    {ev.caseKind === "weapon_case" ? "Normal avg" : "Avg price"}
+                  </th>
+                  {ev.caseKind === "weapon_case" && (
+                    <th className="px-4 py-2 text-right font-normal">StatTrak avg</th>
+                  )}
                   <th className="px-4 py-2 text-right font-normal">E[price]</th>
                   <th className="px-4 py-2 text-right font-normal">Contribution to EV</th>
                 </tr>
@@ -151,14 +155,28 @@ export function CaseDetailView({
                         </div>
                       </td>
                       <td className="px-4 py-2 text-xs text-ink-dim">
-                        {item.perWear.filter((w) => w.price != null).length} / {item.perWear.length}
+                        {(() => {
+                          const used = item.perWear.filter((w) => w.price != null && !w.droppedAsOutlier).length;
+                          const dropped = item.perWear.filter((w) => w.droppedAsOutlier).length;
+                          const total = item.perWear.length;
+                          return (
+                            <span title={dropped > 0 ? `${dropped} wear(s) dropped as thin-market outliers` : undefined}>
+                              {used} / {total}
+                              {dropped > 0 && (
+                                <span className="ml-1 text-warn">−{dropped}</span>
+                              )}
+                            </span>
+                          );
+                        })()}
                       </td>
                       <td className="px-4 py-2 text-right">
                         <PriceCell value={item.normalPrice} />
                       </td>
-                      <td className="px-4 py-2 text-right">
-                        <PriceCell value={item.statTrakPrice} />
-                      </td>
+                      {ev.caseKind === "weapon_case" && (
+                        <td className="px-4 py-2 text-right">
+                          <PriceCell value={item.statTrakPrice} />
+                        </td>
+                      )}
                       <td className="px-4 py-2 text-right">
                         <PriceCell value={item.expectedPrice} />
                       </td>

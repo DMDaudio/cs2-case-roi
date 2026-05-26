@@ -26,6 +26,7 @@ export function getCachedQuote(
     source,
     lowestPrice: r.lowestPrice,
     medianPrice: r.medianPrice,
+    quantity: r.quantity ?? null,
     fetchedAt: r.fetchedAt,
   };
 }
@@ -46,6 +47,7 @@ export function getAllCached(
       source,
       lowestPrice: r.lowestPrice,
       medianPrice: r.medianPrice,
+      quantity: r.quantity ?? null,
       fetchedAt: r.fetchedAt,
     });
   }
@@ -57,6 +59,7 @@ export function setCachedQuotes(quotes: PriceQuote[]) {
     setRow(q.source, q.marketHashName, {
       lowestPrice: q.lowestPrice,
       medianPrice: q.medianPrice,
+      quantity: q.quantity,
       fetchedAt: q.fetchedAt,
     });
   }

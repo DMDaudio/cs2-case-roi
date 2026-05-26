@@ -31,7 +31,7 @@ async function fetchOne(name: string, signal?: AbortSignal): Promise<PriceQuote>
       headers: { "user-agent": "cs2-case-roi/0.1" },
     });
     if (!res.ok) {
-      return { marketHashName: name, source: "steam", lowestPrice: null, medianPrice: null, fetchedAt };
+      return { marketHashName: name, source: "steam", lowestPrice: null, medianPrice: null, quantity: null, fetchedAt };
     }
     const json = (await res.json()) as {
       success?: boolean;
@@ -39,17 +39,18 @@ async function fetchOne(name: string, signal?: AbortSignal): Promise<PriceQuote>
       median_price?: string;
     };
     if (!json.success) {
-      return { marketHashName: name, source: "steam", lowestPrice: null, medianPrice: null, fetchedAt };
+      return { marketHashName: name, source: "steam", lowestPrice: null, medianPrice: null, quantity: null, fetchedAt };
     }
     return {
       marketHashName: name,
       source: "steam",
       lowestPrice: parseMoney(json.lowest_price),
       medianPrice: parseMoney(json.median_price),
+      quantity: null,
       fetchedAt,
     };
   } catch {
-    return { marketHashName: name, source: "steam", lowestPrice: null, medianPrice: null, fetchedAt };
+    return { marketHashName: name, source: "steam", lowestPrice: null, medianPrice: null, quantity: null, fetchedAt };
   }
 }
 

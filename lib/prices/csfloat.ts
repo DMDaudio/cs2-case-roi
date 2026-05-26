@@ -30,7 +30,7 @@ async function fetchOne(name: string, signal?: AbortSignal): Promise<PriceQuote>
       },
     });
     if (!res.ok) {
-      return { marketHashName: name, source: "csfloat", lowestPrice: null, medianPrice: null, fetchedAt };
+      return { marketHashName: name, source: "csfloat", lowestPrice: null, medianPrice: null, quantity: null, fetchedAt };
     }
     const json = (await res.json()) as ListingsResponse;
     const cents = json.data?.[0]?.price;
@@ -40,10 +40,11 @@ async function fetchOne(name: string, signal?: AbortSignal): Promise<PriceQuote>
       source: "csfloat",
       lowestPrice: dollars,
       medianPrice: null,
+      quantity: null,
       fetchedAt,
     };
   } catch {
-    return { marketHashName: name, source: "csfloat", lowestPrice: null, medianPrice: null, fetchedAt };
+    return { marketHashName: name, source: "csfloat", lowestPrice: null, medianPrice: null, quantity: null, fetchedAt };
   }
 }
 

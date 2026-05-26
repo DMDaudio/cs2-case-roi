@@ -74,7 +74,14 @@ export async function getAllCaseSummaries(opts?: {
   const everyName = new Set<string>();
   for (const c of cases) for (const n of namesForCase(c)) everyName.add(n);
 
-  const agg = await aggregate(Array.from(everyName), { bypassCache: opts?.bypassCache });
+  // The dashboard prices ~13k unique market names across 425 containers.
+  // Skinport returns its whole catalogue in a single HTTP call (~2s), so
+  // it's the only source fast enough for the grid. Detail pages still
+  // query all three (~one case = a few hundred names = manageable).
+  const agg = await aggregate(Array.from(everyName), {
+    bypassCache: opts?.bypassCache,
+    sources: ["skinport"],
+  });
 
   const summaries: CaseSummary[] = [];
   for (const c of cases) {

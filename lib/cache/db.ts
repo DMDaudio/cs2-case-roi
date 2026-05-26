@@ -17,6 +17,7 @@ import type { SourceName } from "@/lib/prices/types";
 type PriceRow = {
   lowestPrice: number | null;
   medianPrice: number | null;
+  quantity: number | null;
   fetchedAt: number;
 };
 

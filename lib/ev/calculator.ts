@@ -17,7 +17,14 @@ export type SkinPricing = {
   statTrakPrice: number | null;
   /** Blended: 0.9 * normal + 0.1 * stattrak. */
   expectedPrice: number | null;
-  perWear: Array<{ wear: Wear | null; price: number | null; statTrakPrice: number | null }>;
+  perWear: Array<{
+    wear: Wear | null;
+    price: number | null;
+    statTrakPrice: number | null;
+    quantity: number | null;
+    /** True when this wear was dropped from the average due to thin liquidity. */
+    droppedAsOutlier?: boolean;
+  }>;
   unpriced: boolean;
 };
 
@@ -72,30 +79,64 @@ export function namesForCase(c: CaseMeta): string[] {
   return Array.from(out);
 }
 
+/**
+ * Thin-market wears (qty < MIN_LIQUID_QTY listings on the deepest source)
+ * are excluded from the wear-average when at least MIN_LIQUID_WEARS other
+ * wears for the same skin are liquid. This protects against single
+ * sticker-laden souvenir listings that would otherwise multiply EV by 100x.
+ */
+const MIN_LIQUID_QTY = 3;
+const MIN_LIQUID_WEARS = 2;
+
 function priceForItem(
   item: CaseItem,
   lookup: Map<string, AggregatedPrice>
 ): SkinPricing {
   const perWear: SkinPricing["perWear"] = [];
-  const normalPrices: number[] = [];
-  const stPrices: number[] = [];
 
   if (item.availableWears.length === 0) {
     // Capsule item: single market name, no wear, no StatTrak.
-    const price = lookup.get(item.baseName)?.bestPrice ?? null;
-    perWear.push({ wear: null, price, statTrakPrice: null });
-    if (price != null) normalPrices.push(price);
+    const agg = lookup.get(item.baseName);
+    perWear.push({
+      wear: null,
+      price: agg?.bestPrice ?? null,
+      statTrakPrice: null,
+      quantity: agg?.quantity ?? null,
+    });
   } else {
     for (const wear of item.availableWears) {
       const normalKey = `${item.baseName} (${wear})`;
       const stKey = `StatTrak™ ${item.baseName} (${wear})`;
-      const normal = lookup.get(normalKey)?.bestPrice ?? null;
+      const normalAgg = lookup.get(normalKey);
       const st = item.statTrakAvailable ? lookup.get(stKey)?.bestPrice ?? null : null;
-      perWear.push({ wear, price: normal, statTrakPrice: st });
-      if (normal != null) normalPrices.push(normal);
-      if (st != null) stPrices.push(st);
+      perWear.push({
+        wear,
+        price: normalAgg?.bestPrice ?? null,
+        statTrakPrice: st,
+        quantity: normalAgg?.quantity ?? null,
+      });
     }
   }
+
+  // Outlier filter: if we have enough other liquid wears, drop the thin ones.
+  // quantity == null means "source doesn't expose depth" — treat as unknown, don't filter.
+  const liquidCount = perWear.filter(
+    (w) => w.price != null && w.quantity != null && w.quantity >= MIN_LIQUID_QTY
+  ).length;
+  if (liquidCount >= MIN_LIQUID_WEARS) {
+    for (const w of perWear) {
+      if (w.price != null && w.quantity != null && w.quantity < MIN_LIQUID_QTY) {
+        w.droppedAsOutlier = true;
+      }
+    }
+  }
+
+  const normalPrices = perWear
+    .filter((w) => w.price != null && !w.droppedAsOutlier)
+    .map((w) => w.price as number);
+  const stPrices = perWear
+    .filter((w) => w.statTrakPrice != null && !w.droppedAsOutlier)
+    .map((w) => w.statTrakPrice as number);
 
   const normalPrice =
     normalPrices.length > 0
