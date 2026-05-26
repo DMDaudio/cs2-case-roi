@@ -23,3 +23,14 @@ export const STAT_TRAK_PROBABILITY = 0.1;
  * observed across the Steam community market for popular cases.
  */
 export const STAT_TRAK_FALLBACK_MULTIPLIER = 1.4;
+
+/**
+ * Valve's fixed retail price for a CS2 case key, in USD.
+ *
+ * As of October 2019, all newly-purchased case keys are flagged
+ * non-tradeable / non-marketable, so they don't appear on the Steam
+ * Community Market, CSFloat, or Skinport. The only way to obtain a
+ * usable key is to buy it from Valve in the in-game store at this
+ * fixed price.
+ */
+export const KEY_PRICE_USD = 2.5;

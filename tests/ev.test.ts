@@ -190,6 +190,23 @@ describe("computeCaseEV — synthetic", () => {
     expect(ev.evGross).toBeNull();
   });
 
+  it("falls back to Valve's fixed $2.50 key price when no source lists the key", () => {
+    // Note: no "Synthetic Case Key" entry — simulating a non-marketable post-2019 key
+    const prices = priceMap({
+      "Synthetic Case": 1,
+      "Mil (Factory New)": 1,
+      "Res (Factory New)": 1,
+      "Cla (Factory New)": 1,
+      "Cov (Factory New)": 1,
+      "Knife (Factory New)": 1,
+    });
+    const ev = computeCaseEV(SYNTHETIC, prices);
+    expect(ev.keyUnitPrice).toBe(2.5);
+    expect(ev.totalCostPerOpen).toBe(3.5);
+    expect(ev.evNet).not.toBeNull();
+    expect(ev.evPct).not.toBeNull();
+  });
+
   it("variance is non-negative and scales with item spread", () => {
     const tight = priceMap({
       "Synthetic Case": 0,

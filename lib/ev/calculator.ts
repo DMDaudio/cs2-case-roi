@@ -5,6 +5,7 @@ import {
   TIER_PROBABILITY,
   STAT_TRAK_PROBABILITY,
   STAT_TRAK_FALLBACK_MULTIPLIER,
+  KEY_PRICE_USD,
 } from "./odds";
 
 export type SkinPricing = {
@@ -139,8 +140,15 @@ export function computeCaseEV(
   now = Date.now()
 ): CaseEV {
   const caseUnitPrice = prices.get(c.caseMarketHashName)?.bestPrice ?? null;
-  const keyUnitPrice = c.keyMarketHashName
+  // Case keys haven't been marketable since Oct 2019 — they're sold
+  // only by Valve at a fixed $2.50. Use the live market price only if
+  // somehow listed (legacy pre-2019 keys), otherwise fall back to the
+  // constant.
+  const keyMarketPrice = c.keyMarketHashName
     ? prices.get(c.keyMarketHashName)?.bestPrice ?? null
+    : null;
+  const keyUnitPrice = c.requiresKey
+    ? keyMarketPrice ?? KEY_PRICE_USD
     : 0;
   const totalCostPerOpen =
     caseUnitPrice != null && keyUnitPrice != null ? caseUnitPrice + keyUnitPrice : null;
