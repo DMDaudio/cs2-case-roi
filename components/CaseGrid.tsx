@@ -5,9 +5,18 @@ import type { CaseSummary } from "@/lib/ev/service";
 import { CaseCard } from "./CaseCard";
 import { cn } from "@/lib/utils";
 import { Search, ChevronDown } from "lucide-react";
+import type { CaseKind } from "@/lib/metadata/types";
 
 type SortKey = "ev_pct" | "ev_net" | "cost" | "lottery" | "name" | "newest";
 const PAGE_SIZE = 24;
+
+const KIND_TABS: { key: "all" | CaseKind; label: string }[] = [
+  { key: "all", label: "All" },
+  { key: "weapon_case", label: "Weapon Cases" },
+  { key: "sticker_capsule", label: "Sticker Capsules" },
+  { key: "souvenir_package", label: "Souvenir Packs" },
+  { key: "autograph_capsule", label: "Autograph Capsules" },
+];
 
 const SORT_LABELS: Record<SortKey, string> = {
   ev_pct: "EV %",
@@ -22,12 +31,20 @@ export function CaseGrid({ cases }: { cases: CaseSummary[] }) {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortKey>("ev_pct");
   const [shown, setShown] = useState(PAGE_SIZE);
+  const [kind, setKind] = useState<"all" | CaseKind>("all");
+
+  const countsByKind = useMemo(() => {
+    const map = new Map<string, number>([["all", cases.length]]);
+    for (const c of cases) map.set(c.caseKind, (map.get(c.caseKind) ?? 0) + 1);
+    return map;
+  }, [cases]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const list = q
+    let list = q
       ? cases.filter((c) => c.caseName.toLowerCase().includes(q))
       : [...cases];
+    if (kind !== "all") list = list.filter((c) => c.caseKind === kind);
 
     list.sort((a, b) => {
       switch (sort) {
@@ -48,13 +65,33 @@ export function CaseGrid({ cases }: { cases: CaseSummary[] }) {
     });
 
     return list;
-  }, [cases, query, sort]);
+  }, [cases, query, sort, kind]);
 
   const visible = filtered.slice(0, shown);
   const hasMore = shown < filtered.length;
 
   return (
     <div>
+      <div className="mb-4 flex flex-wrap gap-1.5">
+        {KIND_TABS.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => { setKind(tab.key); setShown(PAGE_SIZE); }}
+            className={cn(
+              "rounded-md border px-3 py-1.5 text-xs uppercase tracking-wider transition-colors",
+              kind === tab.key
+                ? "border-accent-orange/50 bg-accent-orange/15 text-accent-orange"
+                : "border-bg-border bg-bg-raised text-ink-dim hover:border-bg-border hover:text-ink"
+            )}
+          >
+            {tab.label}
+            <span className="num ml-1.5 text-ink-faint">
+              {countsByKind.get(tab.key) ?? 0}
+            </span>
+          </button>
+        ))}
+      </div>
+
       <div className="mb-6 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint" />

@@ -9,6 +9,7 @@ export type CaseSummary = Pick<
   | "caseId"
   | "caseName"
   | "caseImageUrl"
+  | "caseKind"
   | "caseUnitPrice"
   | "keyUnitPrice"
   | "totalCostPerOpen"
@@ -27,6 +28,7 @@ function toSummary(ev: CaseEV): CaseSummary {
     caseId,
     caseName,
     caseImageUrl,
+    caseKind,
     caseUnitPrice,
     keyUnitPrice,
     totalCostPerOpen,
@@ -43,6 +45,7 @@ function toSummary(ev: CaseEV): CaseSummary {
     caseId,
     caseName,
     caseImageUrl,
+    caseKind,
     caseUnitPrice,
     keyUnitPrice,
     totalCostPerOpen,

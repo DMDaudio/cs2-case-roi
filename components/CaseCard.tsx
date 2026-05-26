@@ -4,6 +4,14 @@ import type { CaseSummary } from "@/lib/ev/service";
 import { EVBadge } from "./EVBadge";
 import { PriceCell } from "./PriceCell";
 import { cn, formatUSD } from "@/lib/utils";
+import { CASE_KIND_LABEL } from "@/lib/metadata/types";
+
+const KIND_PILL: Record<CaseSummary["caseKind"], string> = {
+  weapon_case: "border-accent-orange/40 bg-accent-orange/10 text-accent-orange",
+  sticker_capsule: "border-rarity-mil_spec/40 bg-rarity-mil_spec/10 text-rarity-mil_spec",
+  autograph_capsule: "border-rarity-classified/40 bg-rarity-classified/10 text-rarity-classified",
+  souvenir_package: "border-good/40 bg-good/10 text-good",
+};
 
 type Props = {
   data: CaseSummary;
@@ -53,6 +61,14 @@ export function CaseCard({ data, rank }: Props) {
         <div className="absolute right-2 top-2">
           <EVBadge evPct={data.evPct} size="sm" />
         </div>
+        <div
+          className={cn(
+            "absolute bottom-2 left-2 rounded border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider",
+            KIND_PILL[data.caseKind]
+          )}
+        >
+          {CASE_KIND_LABEL[data.caseKind]}
+        </div>
       </div>
 
       <div className="relative p-4">
@@ -70,7 +86,8 @@ export function CaseCard({ data, rank }: Props) {
             <div className="text-ink-faint">Cost / open</div>
             <div className="num mt-0.5 text-ink">{formatUSD(data.totalCostPerOpen)}</div>
             <div className="num mt-0.5 text-[10px] text-ink-faint">
-              {formatUSD(data.caseUnitPrice)} case + {formatUSD(data.keyUnitPrice)} key
+              {formatUSD(data.caseUnitPrice)} {data.caseKind === "weapon_case" ? "case" : "pack"}
+              {data.caseKind === "weapon_case" && ` + ${formatUSD(data.keyUnitPrice)} key`}
             </div>
           </div>
           <div className="text-right">

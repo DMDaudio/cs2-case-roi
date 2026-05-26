@@ -3,10 +3,12 @@ import { computeCaseEV, namesForCase } from "@/lib/ev/calculator";
 import type { CaseMeta } from "@/lib/metadata/types";
 import type { AggregatedPrice } from "@/lib/prices/types";
 import {
-  TIER_PROBABILITY,
+  TIER_PROBABILITY_BY_KIND,
   STAT_TRAK_PROBABILITY,
   STAT_TRAK_FALLBACK_MULTIPLIER,
 } from "@/lib/ev/odds";
+
+const TIER_PROBABILITY = TIER_PROBABILITY_BY_KIND.weapon_case as Record<string, number>;
 
 function priceMap(entries: Record<string, number | null>): Map<string, AggregatedPrice> {
   const m = new Map<string, AggregatedPrice>();
@@ -26,6 +28,7 @@ function priceMap(entries: Record<string, number | null>): Map<string, Aggregate
 const SYNTHETIC: CaseMeta = {
   id: "synthetic",
   name: "Synthetic Case",
+  kind: "weapon_case",
   imageUrl: null,
   releaseDate: null,
   requiresKey: true,
@@ -205,6 +208,45 @@ describe("computeCaseEV — synthetic", () => {
     expect(ev.totalCostPerOpen).toBe(3.5);
     expect(ev.evNet).not.toBeNull();
     expect(ev.evPct).not.toBeNull();
+  });
+
+  it("prices a sticker capsule using sticker tier odds and no wear axis", () => {
+    const capsule: CaseMeta = {
+      id: "cap1",
+      name: "Test Sticker Capsule",
+      kind: "sticker_capsule",
+      imageUrl: null,
+      releaseDate: null,
+      requiresKey: false,
+      keyMarketHashName: null,
+      caseMarketHashName: "Test Sticker Capsule",
+      contents: [
+        { baseName: "Sticker | A", rarity: "high_grade", availableWears: [], statTrakAvailable: false, imageUrl: null },
+        { baseName: "Sticker | B", rarity: "remarkable", availableWears: [], statTrakAvailable: false, imageUrl: null },
+        { baseName: "Sticker | C", rarity: "exotic", availableWears: [], statTrakAvailable: false, imageUrl: null },
+        { baseName: "Sticker | D", rarity: "extraordinary", availableWears: [], statTrakAvailable: false, imageUrl: null },
+      ],
+      rareSpecial: [],
+    };
+    const prices = priceMap({
+      "Test Sticker Capsule": 0.5,
+      "Sticker | A": 0.10,
+      "Sticker | B": 1.0,
+      "Sticker | C": 10.0,
+      "Sticker | D": 100.0,
+    });
+    const ev = computeCaseEV(capsule, prices);
+    const expectedGross =
+      0.80 * 0.10 + 0.16 * 1.0 + 0.032 * 10.0 + 0.008 * 100.0;
+    expect(ev.evGross).toBeCloseTo(expectedGross, 6);
+    // No key, capsule cost only
+    expect(ev.totalCostPerOpen).toBe(0.5);
+    expect(ev.keyUnitPrice).toBe(0);
+    expect(ev.evNet).toBeCloseTo(expectedGross - 0.5, 6);
+    // namesForCase shouldn't try to add wear suffixes for wearless items
+    const names = namesForCase(capsule);
+    expect(names).toContain("Sticker | A");
+    expect(names).not.toContain("Sticker | A (Factory New)");
   });
 
   it("variance is non-negative and scales with item spread", () => {

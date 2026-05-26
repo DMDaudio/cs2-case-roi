@@ -20,18 +20,18 @@ export default async function HomePage() {
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <div className="text-[11px] uppercase tracking-[0.3em] text-accent-orange">
-              counter-strike 2 · case roi
+              counter-strike 2 · container roi
             </div>
             <h1 className="mt-2 text-4xl font-bold tracking-tight">
-              The honest expected return of every case
+              The honest expected return of every container
             </h1>
             <p className="mt-3 max-w-2xl text-sm text-ink-dim">
-              We multiply Valve's official drop odds by live market prices from{" "}
-              <span className="text-ink">Steam</span>,{" "}
+              Weapon cases, sticker capsules, autograph capsules, and souvenir packs —
+              each priced from <span className="text-ink">Steam</span>,{" "}
               <span className="text-ink">CSFloat</span>, and{" "}
-              <span className="text-ink">Skinport</span> — averaged across wears, blended with the 10%
-              StatTrak roll — to show what you'd actually get back per case opened.
-              <span className="ml-1 text-warn">Almost every case loses money on average.</span>
+              <span className="text-ink">Skinport</span> against Valve's published drop odds for
+              that kind. Wear-averaged and StatTrak-blended where it applies.
+              <span className="ml-1 text-warn">Almost everything loses money on average.</span>
             </p>
           </div>
 

@@ -1,8 +1,7 @@
 import type { AggregatedPrice } from "@/lib/prices/types";
 import type { CaseMeta, CaseItem, Rarity, Wear } from "@/lib/metadata/types";
-import { RARITY_ORDER } from "@/lib/metadata/types";
 import {
-  TIER_PROBABILITY,
+  TIER_PROBABILITY_BY_KIND,
   STAT_TRAK_PROBABILITY,
   STAT_TRAK_FALLBACK_MULTIPLIER,
   KEY_PRICE_USD,
@@ -18,7 +17,7 @@ export type SkinPricing = {
   statTrakPrice: number | null;
   /** Blended: 0.9 * normal + 0.1 * stattrak. */
   expectedPrice: number | null;
-  perWear: Array<{ wear: Wear; price: number | null; statTrakPrice: number | null }>;
+  perWear: Array<{ wear: Wear | null; price: number | null; statTrakPrice: number | null }>;
   unpriced: boolean;
 };
 
@@ -27,10 +26,8 @@ export type TierBreakdown = {
   probability: number;
   itemCount: number;
   averageExpectedPrice: number | null;
-  /** Probability of any one skin within the tier ≈ probability / itemCount. */
   perItemProbability: number;
   items: SkinPricing[];
-  /** Number of items with no priced wear at all. */
   unpricedCount: number;
 };
 
@@ -38,19 +35,14 @@ export type CaseEV = {
   caseId: string;
   caseName: string;
   caseImageUrl: string | null;
-  /** Cost to open one case (case + key). */
+  caseKind: CaseMeta["kind"];
   caseUnitPrice: number | null;
   keyUnitPrice: number | null;
   totalCostPerOpen: number | null;
-  /** Expected $ value of the unboxed item. */
   evGross: number | null;
-  /** evGross − totalCostPerOpen. */
   evNet: number | null;
-  /** evNet / totalCostPerOpen. */
   evPct: number | null;
-  /** sqrt of total variance of unboxed-item value. */
   stdDev: number | null;
-  /** stdDev / evGross — higher = more "lottery-like". */
   lotteryScore: number | null;
   tiers: TierBreakdown[];
   totalItems: number;
@@ -58,23 +50,22 @@ export type CaseEV = {
   generatedAt: number;
 };
 
-/**
- * Build the market_hash_names needed to price one case. Includes:
- *  - case container
- *  - key
- *  - every (skin × wear) and its StatTrak variant when applicable
- */
+/** Build the market_hash_names needed to price one container. */
 export function namesForCase(c: CaseMeta): string[] {
   const out = new Set<string>();
   out.add(c.caseMarketHashName);
-  if (c.keyMarketHashName) out.add(c.keyMarketHashName);
+  if (c.keyMarketHashName && c.requiresKey) out.add(c.keyMarketHashName);
   const all = [...c.contents, ...c.rareSpecial];
   for (const item of all) {
-    for (const w of item.availableWears) {
-      const normal = `${item.baseName} (${w})`;
-      out.add(normal);
-      if (item.statTrakAvailable) {
-        out.add(`StatTrak™ ${item.baseName} (${w})`);
+    if (item.availableWears.length === 0) {
+      // wearless (capsules) — baseName is already the full market name
+      out.add(item.baseName);
+    } else {
+      for (const w of item.availableWears) {
+        out.add(`${item.baseName} (${w})`);
+        if (item.statTrakAvailable) {
+          out.add(`StatTrak™ ${item.baseName} (${w})`);
+        }
       }
     }
   }
@@ -89,14 +80,21 @@ function priceForItem(
   const normalPrices: number[] = [];
   const stPrices: number[] = [];
 
-  for (const wear of item.availableWears) {
-    const normalKey = `${item.baseName} (${wear})`;
-    const stKey = `StatTrak™ ${item.baseName} (${wear})`;
-    const normal = lookup.get(normalKey)?.bestPrice ?? null;
-    const st = item.statTrakAvailable ? lookup.get(stKey)?.bestPrice ?? null : null;
-    perWear.push({ wear, price: normal, statTrakPrice: st });
-    if (normal != null) normalPrices.push(normal);
-    if (st != null) stPrices.push(st);
+  if (item.availableWears.length === 0) {
+    // Capsule item: single market name, no wear, no StatTrak.
+    const price = lookup.get(item.baseName)?.bestPrice ?? null;
+    perWear.push({ wear: null, price, statTrakPrice: null });
+    if (price != null) normalPrices.push(price);
+  } else {
+    for (const wear of item.availableWears) {
+      const normalKey = `${item.baseName} (${wear})`;
+      const stKey = `StatTrak™ ${item.baseName} (${wear})`;
+      const normal = lookup.get(normalKey)?.bestPrice ?? null;
+      const st = item.statTrakAvailable ? lookup.get(stKey)?.bestPrice ?? null : null;
+      perWear.push({ wear, price: normal, statTrakPrice: st });
+      if (normal != null) normalPrices.push(normal);
+      if (st != null) stPrices.push(st);
+    }
   }
 
   const normalPrice =
@@ -142,30 +140,26 @@ export function computeCaseEV(
   now = Date.now()
 ): CaseEV {
   const caseUnitPrice = prices.get(c.caseMarketHashName)?.bestPrice ?? null;
-  // Case keys haven't been marketable since Oct 2019 — they're sold
-  // only by Valve at a fixed $2.50. Use the live market price only if
-  // somehow listed (legacy pre-2019 keys), otherwise fall back to the
-  // constant.
   const keyMarketPrice = c.keyMarketHashName
     ? prices.get(c.keyMarketHashName)?.bestPrice ?? null
     : null;
-  const keyUnitPrice = c.requiresKey
-    ? keyMarketPrice ?? KEY_PRICE_USD
-    : 0;
+  const keyUnitPrice = c.requiresKey ? keyMarketPrice ?? KEY_PRICE_USD : 0;
   const totalCostPerOpen =
     caseUnitPrice != null && keyUnitPrice != null ? caseUnitPrice + keyUnitPrice : null;
 
+  const tierMap = TIER_PROBABILITY_BY_KIND[c.kind];
   const tiers: TierBreakdown[] = [];
 
-  for (const rarity of RARITY_ORDER) {
+  for (const [rarityKey, tierProb] of Object.entries(tierMap)) {
+    const rarity = rarityKey as Rarity;
+    if (tierProb == null) continue;
     const pool =
       rarity === "rare_special"
         ? c.rareSpecial
         : c.contents.filter((i) => i.rarity === rarity);
     if (pool.length === 0) continue;
 
-    const tierProb = TIER_PROBABILITY[rarity];
-    const items = pool.map((it) => priceForItem(it, prices));
+    const items = pool.map((it) => priceForItem(it, lookup(prices)));
     const priced = items.filter((x) => x.expectedPrice != null);
     const avg =
       priced.length > 0
@@ -183,25 +177,19 @@ export function computeCaseEV(
     });
   }
 
-  // Total drop probability of the tiers we actually have.
-  // Almost all cases include all 5 tiers; some lack rare_special.
   const totalTierProb = tiers.reduce((a, t) => a + t.probability, 0);
 
   let evGross: number | null = null;
   let variance: number | null = null;
   const tiersWithAvg = tiers.filter((t) => t.averageExpectedPrice != null);
 
-  if (tiersWithAvg.length === tiers.length && tiersWithAvg.length > 0) {
-    // EV = Σ p_t * mean_t, scaled by the renormaliser if a tier is missing
+  if (tiers.length > 0 && tiersWithAvg.length === tiers.length) {
     evGross =
       tiersWithAvg.reduce(
         (a, t) => a + t.probability * (t.averageExpectedPrice as number),
         0
       ) / totalTierProb;
 
-    // Variance: assume within-tier uniform-over-items distribution.
-    // Var(X) = E[X^2] − (E[X])^2
-    //       = Σ p_t * (1/n_t) Σ price_i^2 / norm − evGross^2
     let exSquared = 0;
     for (const t of tiers) {
       const priced = t.items.filter((x) => x.expectedPrice != null);
@@ -230,6 +218,7 @@ export function computeCaseEV(
     caseId: c.id,
     caseName: c.name,
     caseImageUrl: c.imageUrl,
+    caseKind: c.kind,
     caseUnitPrice,
     keyUnitPrice,
     totalCostPerOpen,
@@ -243,4 +232,10 @@ export function computeCaseEV(
     unpricedItems,
     generatedAt: now,
   };
+}
+
+// Trivial helper: keeps priceForItem's signature stable while letting us
+// pass the price map through without type gymnastics.
+function lookup(p: Map<string, AggregatedPrice>) {
+  return p;
 }
