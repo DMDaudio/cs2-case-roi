@@ -12,8 +12,15 @@ import {
 export const ALL_SOURCES: PriceSource[] = [steamSource, skinportSource, csfloatSource];
 
 export type AggregateOptions = {
-  /** Force a re-fetch even if cache is fresh. */
+  /** Force a re-fetch even if cache is fresh (still persists results). */
   bypassCache?: boolean;
+  /**
+   * Skip the price-cache layer entirely — no reads, no writes. Used by the
+   * dashboard, which prices ~13k names per request and relies on the
+   * Skinport source's own in-process catalogue cache instead. Avoids the
+   * cost of reading/writing 13k cache rows on every (serverless) request.
+   */
+  skipCache?: boolean;
   /** Restrict which sources to query. Default: all. */
   sources?: SourceName[];
 };
@@ -54,7 +61,7 @@ export async function aggregate(
       continue;
     }
 
-    const cached = opts.bypassCache
+    const cached = opts.bypassCache || opts.skipCache
       ? new Map<string, PriceQuote>()
       : await getAllCached(marketHashNames, src.name);
 
@@ -70,7 +77,7 @@ export async function aggregate(
     if (missing.length > 0) {
       try {
         const fetched = await src.fetch(missing);
-        await setCachedQuotes(fetched);
+        if (!opts.skipCache) await setCachedQuotes(fetched);
         for (const q of fetched) fresh.set(q.marketHashName, q);
       } catch (err) {
         console.error(`[aggregator] ${src.name} threw:`, err);

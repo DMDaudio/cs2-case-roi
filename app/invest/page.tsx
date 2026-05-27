@@ -6,6 +6,7 @@ import { VerdictChip } from "@/components/VerdictChip";
 import { formatUSD, formatPct } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export default async function InvestPage() {
   const rows = await getInvestRows();

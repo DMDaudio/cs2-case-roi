@@ -4,6 +4,7 @@ import { CompareTable } from "@/components/CompareTable";
 import type { CaseEV } from "@/lib/ev/calculator";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export default async function ComparePage({
   searchParams,

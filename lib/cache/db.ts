@@ -91,7 +91,13 @@ export async function setRow(source: SourceName, name: string, row: PriceRow): P
   const s = ensureLoaded();
   s.prices[keyFor(source, name)] = row;
   dirty = true;
-  flushJson();
+  // NOTE: no flush here — flushing the whole store per row is O(n²) for
+  // bulk writes. Callers batch-write then call flush() once.
+}
+
+/** Persist the JSON store to disk once (no-op in KV mode). */
+export async function flush(): Promise<void> {
+  if (!useKv) flushJson();
 }
 
 export async function getRows(source: SourceName, names: string[]): Promise<Map<string, PriceRow>> {

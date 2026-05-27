@@ -6,6 +6,7 @@ import {
   setSourceDown,
   getSourceDown,
   maxFetchedAt,
+  flush,
 } from "./db";
 import type { PriceQuote, SourceName } from "@/lib/prices/types";
 
@@ -58,6 +59,8 @@ export async function setCachedQuotes(quotes: PriceQuote[]): Promise<void> {
       fetchedAt: q.fetchedAt,
     });
   }
+  // Flush the JSON store once after the batch (no-op in KV mode).
+  await flush();
 }
 
 export async function invalidate(marketHashNames: string[]): Promise<void> {

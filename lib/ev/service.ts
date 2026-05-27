@@ -90,6 +90,7 @@ export async function getAllCaseSummaries(opts?: {
   // query all three (~one case = a few hundred names = manageable).
   const agg = await aggregate(Array.from(everyName), {
     bypassCache: opts?.bypassCache,
+    skipCache: true,
     sources: ["skinport"],
   });
 

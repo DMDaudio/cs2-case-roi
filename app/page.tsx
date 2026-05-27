@@ -5,6 +5,7 @@ import { relativeTime } from "@/lib/utils";
 import type { SourceName } from "@/lib/prices/types";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export default async function HomePage() {
   const { cases, sourceStatus, lastRefreshAt } = await getAllCaseSummaries();
