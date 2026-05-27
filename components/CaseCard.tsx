@@ -5,6 +5,8 @@ import { EVBadge } from "./EVBadge";
 import { PriceCell } from "./PriceCell";
 import { cn, formatUSD } from "@/lib/utils";
 import { CASE_KIND_LABEL } from "@/lib/metadata/types";
+import { VerdictChip } from "./VerdictChip";
+import { Sparkline } from "./Sparkline";
 
 const KIND_PILL: Record<CaseSummary["caseKind"], string> = {
   weapon_case: "border-accent-orange/40 bg-accent-orange/10 text-accent-orange",
@@ -69,6 +71,9 @@ export function CaseCard({ data, rank }: Props) {
         >
           {CASE_KIND_LABEL[data.caseKind]}
         </div>
+        <div className="absolute bottom-2 right-2">
+          <VerdictChip verdict={data.verdict} />
+        </div>
       </div>
 
       <div className="relative p-4">
@@ -113,6 +118,12 @@ export function CaseCard({ data, rank }: Props) {
             </div>
           </div>
         </div>
+
+        {data.spark.length > 1 && (
+          <div className="mt-3 border-t border-bg-border/60 pt-3">
+            <Sparkline points={data.spark} width={240} height={32} />
+          </div>
+        )}
       </div>
     </Link>
   );

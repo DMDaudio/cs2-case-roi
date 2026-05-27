@@ -2,6 +2,10 @@ import { loadCases, loadCaseById } from "@/lib/metadata/loadCases";
 import { aggregate } from "@/lib/prices/aggregator";
 import { computeCaseEV, namesForCase, type CaseEV } from "./calculator";
 import { lastRefreshAt } from "@/lib/cache/priceCache";
+import { getHistories } from "@/lib/history/store";
+import { appreciation } from "@/lib/history/metrics";
+import { verdictFor, type Verdict } from "@/lib/invest/verdict";
+import type { HistoryPoint } from "@/lib/history/types";
 import type { SourceName } from "@/lib/prices/types";
 
 export type CaseSummary = Pick<
@@ -21,7 +25,10 @@ export type CaseSummary = Pick<
   | "totalItems"
   | "unpricedItems"
   | "generatedAt"
->;
+> & {
+  spark: HistoryPoint[];
+  verdict: Verdict;
+};
 
 function toSummary(ev: CaseEV): CaseSummary {
   const {
@@ -57,6 +64,9 @@ function toSummary(ev: CaseEV): CaseSummary {
     totalItems,
     unpricedItems,
     generatedAt,
+    // Trend fields default empty; getAllCaseSummaries fills them in.
+    spark: [],
+    verdict: "SELL",
   };
 }
 
@@ -89,8 +99,24 @@ export async function getAllCaseSummaries(opts?: {
     summaries.push(toSummary(ev));
   }
 
+  // Attach 90-day trend + verdict from price history.
+  const histories = await getHistories(cases.map((c) => c.caseMarketHashName));
+  const withTrend = summaries.map((s, i) => {
+    const hist = histories.get(cases[i].caseMarketHashName) ?? [];
+    const appr90 = appreciation(hist, 90);
+    return {
+      ...s,
+      spark: hist.slice(-90),
+      verdict: verdictFor({
+        evPct: s.evPct,
+        appreciation90d: appr90,
+        lotteryScore: s.lotteryScore,
+      }),
+    };
+  });
+
   return {
-    cases: summaries,
+    cases: withTrend,
     sourceStatus: agg.sourceStatus,
     lastRefreshAt: await lastRefreshAt(),
   };

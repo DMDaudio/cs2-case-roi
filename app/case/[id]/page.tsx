@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getCaseDetail } from "@/lib/ev/service";
+import { getHistory } from "@/lib/history/store";
 import { CaseDetailView } from "@/components/CaseDetailView";
 import { ArrowLeft } from "lucide-react";
 
@@ -14,6 +15,7 @@ export default async function CasePage({
   const { id } = await params;
   const { case: ev, sourceStatus } = await getCaseDetail(decodeURIComponent(id));
   if (!ev) notFound();
+  const history = await getHistory(ev.caseName);
 
   return (
     <div className="space-y-6">
@@ -23,7 +25,7 @@ export default async function CasePage({
       >
         <ArrowLeft className="h-3 w-3" /> All cases
       </Link>
-      <CaseDetailView ev={ev} sourceStatus={sourceStatus} />
+      <CaseDetailView ev={ev} sourceStatus={sourceStatus} history={history} />
     </div>
   );
 }

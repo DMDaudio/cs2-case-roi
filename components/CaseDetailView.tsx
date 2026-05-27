@@ -7,13 +7,17 @@ import { PriceCell } from "./PriceCell";
 import { RefreshButton } from "./RefreshButton";
 import { RARITY_LABEL } from "@/lib/metadata/types";
 import { cn, formatUSD, formatPct } from "@/lib/utils";
+import { PriceChart } from "./PriceChart";
+import type { HistoryPoint } from "@/lib/history/types";
 
 export function CaseDetailView({
   ev,
   sourceStatus,
+  history,
 }: {
   ev: CaseEV;
   sourceStatus: Record<SourceName, "ok" | "down" | "skipped">;
+  history: HistoryPoint[];
 }) {
   return (
     <div className="space-y-6">
@@ -82,6 +86,8 @@ export function CaseDetailView({
           )}
         </div>
       </div>
+
+      <PriceChart points={history} />
 
       {/* Tiers */}
       <div className="space-y-4">
