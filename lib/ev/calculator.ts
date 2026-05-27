@@ -88,6 +88,23 @@ export function namesForCase(c: CaseMeta): string[] {
 const MIN_LIQUID_QTY = 3;
 const MIN_LIQUID_WEARS = 2;
 
+/**
+ * Price-based outlier guard, independent of listing depth. Steam/CSFloat
+ * return quantity == null, so the qty filter above can't see a single inflated
+ * covert listing. Here we drop any wear priced above PRICE_OUTLIER_MULTIPLE×
+ * the median of the OTHER priced wears for the same skin. Requires at least
+ * MIN_WEARS_FOR_PRICE_OUTLIER priced wears so the median is meaningful and we
+ * don't guess which of two wears is "wrong".
+ */
+const PRICE_OUTLIER_MULTIPLE = 8;
+const MIN_WEARS_FOR_PRICE_OUTLIER = 3;
+
+function median(values: number[]): number {
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+}
+
 function priceForItem(
   item: CaseItem,
   lookup: Map<string, AggregatedPrice>
@@ -126,6 +143,21 @@ function priceForItem(
   if (liquidCount >= MIN_LIQUID_WEARS) {
     for (const w of perWear) {
       if (w.price != null && w.quantity != null && w.quantity < MIN_LIQUID_QTY) {
+        w.droppedAsOutlier = true;
+      }
+    }
+  }
+
+  // Price-based outlier guard: works even when quantity is null. Compare each
+  // priced wear against the median of the other (still-included) priced wears.
+  const pricedWears = perWear.filter((w) => w.price != null && !w.droppedAsOutlier);
+  if (pricedWears.length >= MIN_WEARS_FOR_PRICE_OUTLIER) {
+    for (const w of pricedWears) {
+      const others = pricedWears
+        .filter((o) => o !== w)
+        .map((o) => o.price as number);
+      const med = median(others);
+      if (med > 0 && (w.price as number) > PRICE_OUTLIER_MULTIPLE * med) {
         w.droppedAsOutlier = true;
       }
     }

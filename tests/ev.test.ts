@@ -177,6 +177,32 @@ describe("computeCaseEV — synthetic", () => {
     expect(ev.evGross).toBeCloseTo(6, 6);
   });
 
+  it("drops a price-outlier wear (20x the median) even when quantity is null", () => {
+    const c: CaseMeta = {
+      ...SYNTHETIC,
+      contents: [
+        { baseName: "Mil", rarity: "mil_spec", availableWears: ["Factory New", "Minimal Wear", "Field-Tested"], statTrakAvailable: false, imageUrl: null },
+      ],
+      rareSpecial: [],
+    };
+    // priceMap leaves quantity unset (→ null), so the qty filter can't act here.
+    const prices = priceMap({
+      "Synthetic Case": 0,
+      "Synthetic Case Key": 0,
+      "Mil (Factory New)": 10,
+      "Mil (Minimal Wear)": 12,
+      "Mil (Field-Tested)": 240, // 20x the others — a single inflated listing
+    });
+    const ev = computeCaseEV(c, prices);
+    const skin = ev.tiers.find((t) => t.rarity === "mil_spec")!.items[0];
+    const ft = skin.perWear.find((w) => w.wear === "Field-Tested")!;
+
+    expect(ft.droppedAsOutlier).toBe(true);
+    // Outlier excluded → mean of the two sane wears, not dragged up by 240.
+    expect(skin.normalPrice).toBeCloseTo((10 + 12) / 2, 6);
+    expect(skin.expectedPrice).toBeCloseTo((10 + 12) / 2, 6);
+  });
+
   it("flags unpriced items and returns null EV when a whole tier is unpriced", () => {
     const prices = priceMap({
       "Synthetic Case": 1,
