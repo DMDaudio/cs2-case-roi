@@ -22,6 +22,7 @@ beforeEach(() => {
       source: "steam" as const,
       lowestPrice: 10,
       medianPrice: 11,
+      quantity: null,
       fetchedAt: Date.now(),
     }));
   skinportSource.fetch = async (names) =>
@@ -30,6 +31,7 @@ beforeEach(() => {
       source: "skinport" as const,
       lowestPrice: 8,
       medianPrice: null,
+      quantity: null,
       fetchedAt: Date.now(),
     }));
   csfloatSource.fetch = async (names) =>
@@ -38,6 +40,7 @@ beforeEach(() => {
       source: "csfloat" as const,
       lowestPrice: null, // missing
       medianPrice: null,
+      quantity: null,
       fetchedAt: Date.now(),
     }));
 });
@@ -53,11 +56,11 @@ describe("aggregate", () => {
 
   it("returns null bestPrice when every source returns null", async () => {
     steamSource.fetch = async (names) =>
-      names.map((n) => ({ marketHashName: n, source: "steam" as const, lowestPrice: null, medianPrice: null, fetchedAt: 0 }));
+      names.map((n) => ({ marketHashName: n, source: "steam" as const, lowestPrice: null, medianPrice: null, quantity: null, fetchedAt: 0 }));
     skinportSource.fetch = async (names) =>
-      names.map((n) => ({ marketHashName: n, source: "skinport" as const, lowestPrice: null, medianPrice: null, fetchedAt: 0 }));
+      names.map((n) => ({ marketHashName: n, source: "skinport" as const, lowestPrice: null, medianPrice: null, quantity: null, fetchedAt: 0 }));
     csfloatSource.fetch = async (names) =>
-      names.map((n) => ({ marketHashName: n, source: "csfloat" as const, lowestPrice: null, medianPrice: null, fetchedAt: 0 }));
+      names.map((n) => ({ marketHashName: n, source: "csfloat" as const, lowestPrice: null, medianPrice: null, quantity: null, fetchedAt: 0 }));
     const r = await aggregate(["Y"], { bypassCache: true });
     expect(r.prices.get("Y")!.bestPrice).toBeNull();
   });

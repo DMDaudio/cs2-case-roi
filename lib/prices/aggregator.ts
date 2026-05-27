@@ -48,15 +48,15 @@ export async function aggregate(
 
   for (const src of ALL_SOURCES) {
     if (!requested.has(src.name)) continue;
-    if (isSourceDown(src.name)) {
+    if (await isSourceDown(src.name)) {
       sourceStatus[src.name] = "down";
       perSourceQuotes.set(src.name, new Map());
       continue;
     }
 
-    let cached = opts.bypassCache
+    const cached = opts.bypassCache
       ? new Map<string, PriceQuote>()
-      : getAllCached(marketHashNames, src.name);
+      : await getAllCached(marketHashNames, src.name);
 
     // Filter cached → only fresh entries (getAllCached returns all; we filter by TTL)
     const now = Date.now();
@@ -70,11 +70,11 @@ export async function aggregate(
     if (missing.length > 0) {
       try {
         const fetched = await src.fetch(missing);
-        setCachedQuotes(fetched);
+        await setCachedQuotes(fetched);
         for (const q of fetched) fresh.set(q.marketHashName, q);
       } catch (err) {
         console.error(`[aggregator] ${src.name} threw:`, err);
-        markSourceDown(src.name);
+        await markSourceDown(src.name);
         sourceStatus[src.name] = "down";
       }
     }

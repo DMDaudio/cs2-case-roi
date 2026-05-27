@@ -1,24 +1,23 @@
 import {
   getRow,
   setRow,
+  getRows,
   deleteByName,
   setSourceDown,
   getSourceDown,
   maxFetchedAt,
-  getAllRows,
 } from "./db";
 import type { PriceQuote, SourceName } from "@/lib/prices/types";
 
-export const PRICE_TTL_MS = 30 * 60 * 1000; // 30 minutes
-export const SOURCE_DOWN_MS = 10 * 60 * 1000; // 10 minutes
+export const PRICE_TTL_MS = 30 * 60 * 1000;
+export const SOURCE_DOWN_MS = 10 * 60 * 1000;
 
-/** Returns the cached quote for (mhn, source) if it's still fresh, else null. */
-export function getCachedQuote(
+export async function getCachedQuote(
   marketHashName: string,
   source: SourceName,
   now = Date.now()
-): PriceQuote | null {
-  const r = getRow(source, marketHashName);
+): Promise<PriceQuote | null> {
+  const r = await getRow(source, marketHashName);
   if (!r) return null;
   if (now - r.fetchedAt > PRICE_TTL_MS) return null;
   return {
@@ -31,17 +30,13 @@ export function getCachedQuote(
   };
 }
 
-/** Returns all cached quotes for the given names regardless of TTL. */
-export function getAllCached(
+export async function getAllCached(
   marketHashNames: string[],
   source: SourceName
-): Map<string, PriceQuote> {
-  if (marketHashNames.length === 0) return new Map();
-  const rows = getAllRows(source);
+): Promise<Map<string, PriceQuote>> {
+  const rows = await getRows(source, marketHashNames);
   const out = new Map<string, PriceQuote>();
-  for (const name of marketHashNames) {
-    const r = rows.get(name);
-    if (!r) continue;
+  for (const [name, r] of rows) {
     out.set(name, {
       marketHashName: name,
       source,
@@ -54,9 +49,9 @@ export function getAllCached(
   return out;
 }
 
-export function setCachedQuotes(quotes: PriceQuote[]) {
+export async function setCachedQuotes(quotes: PriceQuote[]): Promise<void> {
   for (const q of quotes) {
-    setRow(q.source, q.marketHashName, {
+    await setRow(q.source, q.marketHashName, {
       lowestPrice: q.lowestPrice,
       medianPrice: q.medianPrice,
       quantity: q.quantity,
@@ -65,22 +60,20 @@ export function setCachedQuotes(quotes: PriceQuote[]) {
   }
 }
 
-/** Drop cached prices for the given market_hash_names across all sources. */
-export function invalidate(marketHashNames: string[]) {
-  deleteByName(marketHashNames);
+export async function invalidate(marketHashNames: string[]): Promise<void> {
+  await deleteByName(marketHashNames);
 }
 
-export function markSourceDown(source: SourceName, now = Date.now()) {
-  setSourceDown(source, now + SOURCE_DOWN_MS);
+export async function markSourceDown(source: SourceName, now = Date.now()): Promise<void> {
+  await setSourceDown(source, now + SOURCE_DOWN_MS);
 }
 
-export function isSourceDown(source: SourceName, now = Date.now()): boolean {
-  const until = getSourceDown(source);
+export async function isSourceDown(source: SourceName, now = Date.now()): Promise<boolean> {
+  const until = await getSourceDown(source);
   if (until == null) return false;
   return until > now;
 }
 
-/** Returns the unix-ms timestamp of the most recent cached row, or null. */
-export function lastRefreshAt(): number | null {
+export async function lastRefreshAt(): Promise<number | null> {
   return maxFetchedAt();
 }

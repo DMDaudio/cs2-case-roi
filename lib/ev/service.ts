@@ -92,7 +92,7 @@ export async function getAllCaseSummaries(opts?: {
   return {
     cases: summaries,
     sourceStatus: agg.sourceStatus,
-    lastRefreshAt: lastRefreshAt(),
+    lastRefreshAt: await lastRefreshAt(),
   };
 }
 
@@ -111,13 +111,13 @@ export async function getCaseDetail(
     return {
       case: null,
       sourceStatus: { steam: "skipped", csfloat: "skipped", skinport: "skipped" },
-      lastRefreshAt: lastRefreshAt(),
+      lastRefreshAt: await lastRefreshAt(),
     };
   }
   const agg = await aggregate(namesForCase(c), { bypassCache: opts?.bypassCache });
   return {
     case: computeCaseEV(c, agg.prices),
     sourceStatus: agg.sourceStatus,
-    lastRefreshAt: lastRefreshAt(),
+    lastRefreshAt: await lastRefreshAt(),
   };
 }

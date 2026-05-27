@@ -16,8 +16,6 @@ import {
   isSourceDown,
 } from "@/lib/cache/priceCache";
 import { closeDb } from "@/lib/cache/db";
-import fs from "node:fs";
-import path from "node:path";
 
 beforeEach(() => {
   // Wipe the JSON store between tests so each test starts clean.
@@ -27,47 +25,47 @@ beforeEach(() => {
 });
 
 describe("priceCache", () => {
-  it("returns a fresh row within TTL and null after expiry", () => {
+  it("returns a fresh row within TTL and null after expiry", async () => {
     const now = Date.now();
-    setCachedQuotes([
-      { marketHashName: "A", source: "steam", lowestPrice: 5, medianPrice: 6, fetchedAt: now },
+    await setCachedQuotes([
+      { marketHashName: "A", source: "steam", lowestPrice: 5, medianPrice: 6, quantity: null, fetchedAt: now },
     ]);
-    expect(getCachedQuote("A", "steam", now + 60_000)?.lowestPrice).toBe(5);
-    expect(getCachedQuote("A", "steam", now + PRICE_TTL_MS + 1_000)).toBeNull();
+    expect((await getCachedQuote("A", "steam", now + 60_000))?.lowestPrice).toBe(5);
+    expect(await getCachedQuote("A", "steam", now + PRICE_TTL_MS + 1_000)).toBeNull();
   });
 
-  it("upserts existing rows", () => {
+  it("upserts existing rows", async () => {
     const t = Date.now();
-    setCachedQuotes([
-      { marketHashName: "A", source: "steam", lowestPrice: 5, medianPrice: 6, fetchedAt: t },
+    await setCachedQuotes([
+      { marketHashName: "A", source: "steam", lowestPrice: 5, medianPrice: 6, quantity: null, fetchedAt: t },
     ]);
-    setCachedQuotes([
-      { marketHashName: "A", source: "steam", lowestPrice: 7, medianPrice: 8, fetchedAt: t + 100 },
+    await setCachedQuotes([
+      { marketHashName: "A", source: "steam", lowestPrice: 7, medianPrice: 8, quantity: null, fetchedAt: t + 100 },
     ]);
-    const q = getCachedQuote("A", "steam", t + 100);
+    const q = await getCachedQuote("A", "steam", t + 100);
     expect(q?.lowestPrice).toBe(7);
     expect(q?.fetchedAt).toBe(t + 100);
   });
 
-  it("invalidate() deletes specified names across all sources", () => {
+  it("invalidate() deletes specified names across all sources", async () => {
     const t = Date.now();
-    setCachedQuotes([
-      { marketHashName: "A", source: "steam", lowestPrice: 1, medianPrice: null, fetchedAt: t },
-      { marketHashName: "A", source: "csfloat", lowestPrice: 2, medianPrice: null, fetchedAt: t },
-      { marketHashName: "B", source: "steam", lowestPrice: 3, medianPrice: null, fetchedAt: t },
+    await setCachedQuotes([
+      { marketHashName: "A", source: "steam", lowestPrice: 1, medianPrice: null, quantity: null, fetchedAt: t },
+      { marketHashName: "A", source: "csfloat", lowestPrice: 2, medianPrice: null, quantity: null, fetchedAt: t },
+      { marketHashName: "B", source: "steam", lowestPrice: 3, medianPrice: null, quantity: null, fetchedAt: t },
     ]);
-    invalidate(["A"]);
-    expect(getCachedQuote("A", "steam", t)).toBeNull();
-    expect(getCachedQuote("A", "csfloat", t)).toBeNull();
-    expect(getCachedQuote("B", "steam", t)?.lowestPrice).toBe(3);
+    await invalidate(["A"]);
+    expect(await getCachedQuote("A", "steam", t)).toBeNull();
+    expect(await getCachedQuote("A", "csfloat", t)).toBeNull();
+    expect((await getCachedQuote("B", "steam", t))?.lowestPrice).toBe(3);
   });
 
-  it("source-down flag flips for 10 minutes", () => {
+  it("source-down flag flips for 10 minutes", async () => {
     const now = Date.now();
-    expect(isSourceDown("steam", now)).toBe(false);
-    markSourceDown("steam", now);
-    expect(isSourceDown("steam", now + 5 * 60_000)).toBe(true);
-    expect(isSourceDown("steam", now + 11 * 60_000)).toBe(false);
+    expect(await isSourceDown("steam", now)).toBe(false);
+    await markSourceDown("steam", now);
+    expect(await isSourceDown("steam", now + 5 * 60_000)).toBe(true);
+    expect(await isSourceDown("steam", now + 11 * 60_000)).toBe(false);
   });
 });
 
