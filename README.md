@@ -38,7 +38,39 @@ out-of-the-box. Run `npm run fetch-metadata` once to pull every CS2 case from
 | `npm run start`          | Run the production build                              |
 | `npm run fetch-metadata` | Refresh `data/cases.json` from ByMykel/CSGO-API       |
 | `npm run warm-cache`     | Pre-fetch prices for the top-50 cases (cron-friendly) |
+| `npm run backfill-history` | One-off Steam price-history backfill into Vercel KV |
 | `npm test`               | Run the Vitest suite                                  |
+
+## Invest / price history
+
+Price history powers the `/invest` page, the card sparklines, the open/hold/sell
+verdict chips, and the case-detail chart. It needs Vercel KV and (for deep
+history) a Steam cookie.
+
+### Env vars (Vercel → Settings → Environment Variables)
+
+| Var | Where to get it | Purpose |
+|-----|-----------------|---------|
+| `KV_REST_API_URL` / `KV_REST_API_TOKEN` | Auto-set when you create a Vercel KV store and link it | Persistent price cache + history |
+| `STEAM_LOGIN_SECURE` | Your browser cookie `steamLoginSecure` while logged into steamcommunity.com | One-off deep history backfill |
+| `CRON_SECRET` | Auto-set by Vercel Cron | Protects the daily snapshot endpoint |
+
+### One-off backfill
+
+After linking KV and pulling env vars locally (`vercel env pull`):
+
+    STEAM_LOGIN_SECURE=<cookie> npm run backfill-history
+
+Runs gradually (rate-limited, ~1.5s/item). Only needed once — the daily cron
+(`/api/cron/snapshot`, 06:00 UTC) keeps history current afterward, so the Steam
+cookie is not needed for ongoing operation.
+
+> ⚠️ `STEAM_LOGIN_SECURE` is an account session token. Keep it in env vars only —
+> never commit or log it. It expires every ~1–2 weeks; re-paste a fresh one when
+> backfill starts returning auth failures.
+
+Locally, with no KV configured, the app reads `data/history.sample.json` so the
+Invest UI is demoable offline.
 
 ## Architecture
 
