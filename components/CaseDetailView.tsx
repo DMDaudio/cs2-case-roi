@@ -6,7 +6,7 @@ import { RarityBar } from "./RarityBar";
 import { PriceCell } from "./PriceCell";
 import { RefreshButton } from "./RefreshButton";
 import { RARITY_LABEL } from "@/lib/metadata/types";
-import { cn, formatUSD, formatPct } from "@/lib/utils";
+import { cn, formatUSD, formatPct, formatRatioPct, unboxingRoi } from "@/lib/utils";
 import { PriceChart } from "./PriceChart";
 import type { HistoryPoint } from "@/lib/history/types";
 
@@ -60,7 +60,7 @@ export function CaseDetailView({
           <div className="flex flex-col items-end gap-2">
             <EVBadge evPct={ev.evPct} size="lg" />
             <div className="num text-sm text-ink-dim">
-              expected {formatUSD(ev.evGross)} · net {formatUSD(ev.evNet)}
+              {formatRatioPct(unboxingRoi(ev.evPct))} unboxing ROI · expected {formatUSD(ev.evGross)} · net {formatUSD(ev.evNet)}
             </div>
             <RefreshButton caseId={ev.caseId} />
           </div>

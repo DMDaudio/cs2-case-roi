@@ -2,9 +2,8 @@
 
 import { useMemo } from "react";
 import type { CaseEV } from "@/lib/ev/calculator";
-import { EVBadge } from "./EVBadge";
 import { PriceCell } from "./PriceCell";
-import { formatUSD, formatPct, cn } from "@/lib/utils";
+import { formatUSD, formatPct, formatRatioPct, unboxingRoi, cn } from "@/lib/utils";
 import { RARITY_ORDER, RARITY_LABEL } from "@/lib/metadata/types";
 import { RarityBar } from "./RarityBar";
 
@@ -46,10 +45,29 @@ export function CompareTable({ cases }: { cases: CaseEV[] }) {
           </tr>
         </thead>
         <tbody>
-          <Row label="EV %">
+          <Row label="Unboxing ROI">
             {cases.map((c) => (
-              <td key={c.caseId} className="px-4 py-2">
-                <EVBadge evPct={c.evPct} />
+              <td
+                key={c.caseId}
+                className={cn(
+                  "px-4 py-2 num font-semibold",
+                  c.evPct == null ? "text-ink-faint" : c.evPct >= 0 ? "text-good" : "text-bad"
+                )}
+              >
+                {formatRatioPct(unboxingRoi(c.evPct))}
+              </td>
+            ))}
+          </Row>
+          <Row label="Net ROI">
+            {cases.map((c) => (
+              <td
+                key={c.caseId}
+                className={cn(
+                  "px-4 py-2 num",
+                  c.evPct == null ? "text-ink-faint" : c.evPct >= 0 ? "text-good" : "text-bad"
+                )}
+              >
+                {formatPct(c.evPct)}
               </td>
             ))}
           </Row>

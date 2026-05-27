@@ -21,6 +21,21 @@ export function formatPct(n: number | null | undefined, digits = 1): string {
   return `${v >= 0 ? "+" : ""}${v.toFixed(digits)}%`;
 }
 
+/** Format a ratio as a plain percentage with no leading sign (e.g. 0.474 → "47%"). */
+export function formatRatioPct(n: number | null | undefined, digits = 0): string {
+  if (n == null || !Number.isFinite(n)) return "—";
+  return `${(n * 100).toFixed(digits)}%`;
+}
+
+/**
+ * Unboxing ROI = the share of your spend you get back on average.
+ * Derived from net EV%: grossROI = 1 + evPct. (evPct = EV/cost − 1)
+ */
+export function unboxingRoi(evPct: number | null | undefined): number | null {
+  if (evPct == null || !Number.isFinite(evPct)) return null;
+  return evPct + 1;
+}
+
 export function relativeTime(unixMs: number, now = Date.now()): string {
   const diff = Math.max(0, now - unixMs);
   const s = Math.floor(diff / 1000);

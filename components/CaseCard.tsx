@@ -61,7 +61,7 @@ export function CaseCard({ data, rank }: Props) {
           </div>
         )}
         <div className="absolute right-2 top-2">
-          <EVBadge evPct={data.evPct} size="sm" />
+          <EVBadge evPct={data.evPct} size="md" />
         </div>
         <div
           className={cn(

@@ -40,7 +40,19 @@ EV_gross    = Σ over tiers t of P(t) × EV_tier(t)
 EV_net      = EV_gross − caseUnitPrice − keyUnitPrice
 EV_pct      = EV_net / (caseUnitPrice + keyUnitPrice)`}</code></pre>
 
-      <h2>4. Lottery score</h2>
+      <h2>Two ways we show ROI</h2>
+      <p>
+        The same expected value can be quoted two ways, and we show both:
+      </p>
+      <ul>
+        <li><strong>Unboxing ROI</strong> = <code>EV / cost</code> — the share of your spend you get back on average. A Kilowatt at $1.33 EV on $2.81 cost is <strong>47%</strong>: you keep about 47¢ of every dollar.</li>
+        <li><strong>Net ROI</strong> = <code>(EV − cost) / cost</code> — your gain or loss. Same case = <strong>−53%</strong>.</li>
+      </ul>
+      <p>
+        They're the same number shifted by 100% (<code>net = unboxing − 100%</code>). Unboxing ROI is the headline figure on cards; net is shown alongside. Anything under 100% unboxing ROI (i.e. negative net) loses money — which is almost every container.
+      </p>
+
+      <h2>5. Lottery score</h2>
       <p>
         Most cases have a deeply negative mean dominated by rare knife / glove drops.
         A high <strong>σ/μ</strong> means the case is essentially a lottery ticket: most
