@@ -9,6 +9,7 @@
     "lint": "next lint",
     "fetch-metadata": "tsx scripts/fetch-metadata.ts",
     "warm-cache": "tsx scripts/warm-cache.ts",
+    "backfill-history": "tsx scripts/backfill-history.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },
