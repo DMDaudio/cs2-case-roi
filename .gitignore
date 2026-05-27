@@ -33,3 +33,6 @@ pnpm-debug.log*
 .idea
 *.tsbuildinfo
 coverage
+
+# runtime price cache (JSON backend)
+data/cache.json
