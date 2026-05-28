@@ -131,7 +131,7 @@ export type OneCaseResponse = {
 
 export async function getCaseDetail(
   id: string,
-  opts?: { bypassCache?: boolean }
+  opts?: { bypassCache?: boolean; sources?: SourceName[] }
 ): Promise<OneCaseResponse> {
   const c = loadCaseById(id);
   if (!c) {
@@ -141,7 +141,17 @@ export async function getCaseDetail(
       lastRefreshAt: await lastRefreshAt(),
     };
   }
-  const agg = await aggregate(namesForCase(c), { bypassCache: opts?.bypassCache });
+  // Default to Skinport-only so detail pages render fast on a cold
+  // serverless start (Steam/CSFloat are per-item with strict rate limits
+  // — ~200 names × ~125ms blows past the function budget). The "Refresh
+  // prices" button (POST /api/refresh?caseId=...) calls this with all
+  // three sources + bypassCache to enrich on demand.
+  const sources = opts?.sources ?? ["skinport"];
+  const agg = await aggregate(namesForCase(c), {
+    bypassCache: opts?.bypassCache,
+    skipCache: true,
+    sources,
+  });
   return {
     case: computeCaseEV(c, agg.prices),
     sourceStatus: agg.sourceStatus,

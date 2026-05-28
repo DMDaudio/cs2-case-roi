@@ -13,15 +13,21 @@ export async function POST(req: Request) {
   if (caseId) {
     const c = loadCaseById(caseId);
     if (!c) return NextResponse.json({ error: "case_not_found" }, { status: 404 });
-    invalidate(namesForCase(c));
-    const data = await getCaseDetail(caseId, { bypassCache: true });
+    await invalidate(namesForCase(c));
+    // Explicit user-triggered refresh: pay the cost of querying all 3 sources
+    // for richer source badges. The default getCaseDetail call only hits
+    // Skinport so the page renders fast on cold start.
+    const data = await getCaseDetail(caseId, {
+      bypassCache: true,
+      sources: ["steam", "csfloat", "skinport"],
+    });
     return NextResponse.json(data);
   }
 
   // Otherwise: refresh everything (used by the cron / "refresh all" button)
   const everyName = new Set<string>();
   for (const c of loadCases()) for (const n of namesForCase(c)) everyName.add(n);
-  invalidate(Array.from(everyName));
+  await invalidate(Array.from(everyName));
   const data = await getAllCaseSummaries({ bypassCache: true });
   return NextResponse.json(data);
 }
