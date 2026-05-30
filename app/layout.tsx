@@ -1,11 +1,31 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
+const siteTitle = "CS2 Case ROI — Live Unboxing ROI for All 425 Containers";
+const siteDescription =
+  "The honest expected return of every CS2 weapon case, sticker capsule, and souvenir package. Aggregated live prices from Steam, CSFloat, and Skinport.";
+
 export const metadata: Metadata = {
-  title: "CS2 Case ROI — live expected return per case",
-  description:
-    "Live statistical expected return for every CS2 weapon case, computed from real-time Steam Market, CSFloat, and Skinport prices.",
+  metadataBase: new URL("https://cs2-case-roi.vercel.app"),
+  title: {
+    template: "%s · CS2 Case ROI",
+    default: siteTitle,
+  },
+  description: siteDescription,
+  openGraph: {
+    title: siteTitle,
+    description: siteDescription,
+    type: "website",
+    url: "https://cs2-case-roi.vercel.app",
+    siteName: "CS2 Case ROI",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: siteDescription,
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -42,9 +62,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="mx-auto max-w-7xl px-6 py-8">{children}</main>
 
         <footer className="border-t border-bg-border bg-bg-base/40 py-6 text-center text-xs text-ink-faint">
-          Live prices from Steam Market · CSFloat · Skinport · cached 30 min ·
-          this is not financial advice
+          <div className="mx-auto max-w-3xl space-y-2 px-6">
+            <div>
+              Live prices from Steam Market · CSFloat · Skinport · cached 30 min · this is not financial advice
+            </div>
+            <div>
+              Feedback or bug? <a href="https://github.com/DMDaudio/cs2-case-roi/discussions" className="text-accent-cyan hover:underline">Open a discussion on GitHub</a>.
+            </div>
+            <div className="text-ink-faint/70">
+              Some market links are affiliate links — we earn a small commission when you buy through them. Prices to you are unaffected.
+            </div>
+          </div>
         </footer>
+        <Analytics />
       </body>
     </html>
   );

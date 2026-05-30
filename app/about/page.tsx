@@ -1,3 +1,8 @@
+export const metadata = {
+  title: "Method",
+  description: "How we compute CS2 case ROI: Valve drop odds, multi-source pricing, StatTrak blending, outlier filtering.",
+};
+
 export default function AboutPage() {
   return (
     <article className="panel-elevated prose prose-invert max-w-none p-8 prose-headings:text-ink prose-p:text-ink-dim prose-strong:text-ink prose-li:text-ink-dim prose-a:text-accent-cyan">

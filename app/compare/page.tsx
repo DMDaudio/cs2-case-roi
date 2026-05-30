@@ -6,6 +6,11 @@ import type { CaseEV } from "@/lib/ev/calculator";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
+export const metadata = {
+  title: "Compare",
+  description: "Side-by-side comparison of up to 4 CS2 containers — ROI, volatility, rarity tier breakdown.",
+};
+
 export default async function ComparePage({
   searchParams,
 }: {

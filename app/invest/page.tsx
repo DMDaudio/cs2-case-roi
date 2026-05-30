@@ -8,6 +8,11 @@ import { formatUSD, formatPct } from "@/lib/utils";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
+export const metadata = {
+  title: "Invest",
+  description: "Which CS2 containers are appreciating? 90-day price trends and frozen-supply detection.",
+};
+
 export default async function InvestPage() {
   const rows = await getInvestRows();
   rows.sort((a, b) => (b.change90d ?? -Infinity) - (a.change90d ?? -Infinity));

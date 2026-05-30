@@ -7,6 +7,11 @@ import type { SourceName } from "@/lib/prices/types";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
+export const metadata = {
+  title: "Dashboard",
+  description: "Every CS2 container ranked by unboxing ROI. Live multi-source pricing.",
+};
+
 export default async function HomePage() {
   const { cases, sourceStatus, lastRefreshAt } = await getAllCaseSummaries();
 
